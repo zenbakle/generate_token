@@ -1,3 +1,4 @@
+import os
 import uuid,base64
 from flask import Flask,request,jsonify
 from flask_restful import Resource, Api
@@ -15,7 +16,7 @@ api = Api(app)
 flask_uuid = FlaskUUID()
 flask_uuid.init_app(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///token.sqlite3"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlite:///token.sqlite3"
 app.config['SECRET_KEY'] = '12345'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
