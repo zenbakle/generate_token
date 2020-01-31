@@ -10,14 +10,14 @@ from connect import pin_table, db
 
 app = Flask(__name__)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlite:///token.sqlite3"
+app.config['SECRET_KEY'] = '12345'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 api = Api(app)
 
 flask_uuid = FlaskUUID()
 flask_uuid.init_app(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlite:///token.sqlite3"
-app.config['SECRET_KEY'] = '12345'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 migrate = Migrate(app, db)
 
@@ -31,6 +31,8 @@ class Generate(Resource):
         pin = result.pin
         return jsonify({'id':id,"pin":pin})
 
+api.add_resource(Generate, '/token')
+
 class validate(Resource):
     def get(self):
         request_data = request.get_json()
@@ -43,7 +45,7 @@ class validate(Resource):
 
 
 api.add_resource(validate, '/valid_token')
-api.add_resource(Generate, '/token')
+
 
 if __name__ == '__main__':
     app.run()
