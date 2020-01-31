@@ -13,13 +13,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlit
 app.config['SECRET_KEY'] = '12345'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-flask_uuid = FlaskUUID()
-flask_uuid.init_app(app)
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 api = Api(app)
+
+flask_uuid = FlaskUUID()
+flask_uuid.init_app(app)
 
 class pin_table(db.Model):
     id = db.Column('id',db.Integer,primary_key = True)
