@@ -5,8 +5,7 @@ from flask_restful import Resource, Api
 from flask_migrate import Migrate
 import random
 from flask_uuid import FlaskUUID
-from flask_sqlalchemy import SQLAlchemy
-from connect import pin_table
+from connect import pin_table, db
 
 
 app = Flask(__name__)
@@ -20,7 +19,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlit
 app.config['SECRET_KEY'] = '12345'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 class Generate(Resource):
@@ -31,7 +29,7 @@ class Generate(Resource):
         result = pin_table.query.filter_by(id = len(all)).first()
         id = result.id
         pin = result.pin
-        return {'id':id,"pin":pin}
+        return jsonify({'id':id,"pin":pin})
 
 class validate(Resource):
     def get(self):
@@ -47,5 +45,6 @@ class validate(Resource):
 api.add_resource(validate, '/valid_token')
 api.add_resource(Generate, '/token')
 
-app.run(port = 5000, debug=True)
+if __name__ == '__main__':
+    app.run()
 
