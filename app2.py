@@ -36,15 +36,13 @@ class Generate(Resource):
 class validate(Resource):
     def get(self):
         request_data = request.get_json()
-        id = request_data['id'],
+        id = request_data['id']
         pin = request_data['pin']
         if pin_table.query.filter_by(pin= str(pin)).first() is not None:
-            if pin_table.query.filter_by(pin=str(pin)).first() is not None:
-                return "1"
-            else:
-                return "0"
+            return "1"
         else:
             return "0"
+
 
 api.add_resource(validate, '/valid_token')
 api.add_resource(Generate, '/token')
