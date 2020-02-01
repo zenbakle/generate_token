@@ -16,11 +16,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-migrate1 = Migrate(compare_type=True)
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
-migrate1.init_app(app)
-
 
 api = Api(app)
 
