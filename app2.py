@@ -2,8 +2,9 @@ import os
 import uuid,base64
 from flask import Flask,request,jsonify
 from flask_restful import Resource, Api
-from flask_migrate import Migrate
+from flask_migrate import Migrate,MigrateCommand
 from flask_sqlalchemy import SQLAlchemy
+from flask_script import Manager
 import random
 from flask_uuid import FlaskUUID
 
@@ -14,7 +15,10 @@ app.config['SECRET_KEY'] = '12345'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+##migrate = Migrate(app, db)
+migrate = Migrate(compare_type=True)
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 api = Api(app)
 
