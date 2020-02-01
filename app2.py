@@ -9,6 +9,10 @@ import random
 from flask_uuid import FlaskUUID
 
 app = Flask(__name__)
+migrate = Migrate(compare_type=True)
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
+migrate.init_app(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlite:///token.sqlite3"
 app.config['SECRET_KEY'] = '12345'
@@ -16,9 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 ##migrate = Migrate(app, db)
-migrate = Migrate(compare_type=True)
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
+
 
 api = Api(app)
 
