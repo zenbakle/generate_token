@@ -10,8 +10,7 @@ from flask_uuid import FlaskUUID
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('postgres://hoccmnbsiekmrc'
-':cf8c0929194fd52fb06c38ad7f7a57bb8047cf0d6dd71889a304395b5d7821ff@ec2-100-26-88-55.compute-1.amazonaws.com:5432/ddvqu9f73gbfa2') or "sqlite:///token.sqlite3"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlite:///token.sqlite3"
 app.config['SECRET_KEY'] = '12345'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -37,7 +36,7 @@ class Generate(Resource):
         all = pin_table.query.all()
         result = pin_table.query.filter_by(id = len(all)).first()
         id = result.id
-        pin = result.pin
+        pin = result.pi
         return jsonify({'id':id,"pin":pin})
 
 api.add_resource(Generate, '/')
