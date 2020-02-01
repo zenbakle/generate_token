@@ -36,7 +36,7 @@ class Generate(Resource):
         all = pin_table.query.all()
         result = pin_table.query.filter_by(id = len(all)).first()
         id = result.id
-        pin = result.pi
+        pin = result.pin
         return jsonify({'id':id,"pin":pin})
 
 api.add_resource(Generate, '/')
