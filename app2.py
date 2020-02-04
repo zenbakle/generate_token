@@ -1,17 +1,15 @@
 import os
-import uuid, base64
+import uuid
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
-from flask_migrate import Migrate, MigrateCommand
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_script import Manager
-import random
 from flask_uuid import FlaskUUID
 
 # initializing flask app
 app = Flask(__name__)
 # configuring sqlalchemy and connecting connection to sqlite3
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlite:///token.sqlite3"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or "sqlite:///token.db"
 app.config['SECRET_KEY'] = '12345'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -33,10 +31,13 @@ flask_uuid.init_app(app)
 # that would be generated
 class pin_table(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
+    s_n = db.Column(db.String(12), unique=True, nullable=False)
     pin = db.Column(db.String(15), unique=True, nullable=False)
 
-    def __init__(self, pin):
+    def __init__(self, pin,s_n):
         self.pin = pin
+        self.s_n =s_n
+
 
 
 # the class for default resource to be returned when ever a request is made
@@ -46,13 +47,11 @@ class pin_table(db.Model):
 # the newly generated pin and id is returned in json format
 class Generate(Resource):
     def get(self):
-        db.session.add(pin_table(str(int(uuid.uuid4()))[:15]))
+        s_n = 314159265365 + 1
+        pin = str(int(uuid.uuid4()))[:15]
+        db.session.add(pin_table(pin,s_n))
         db.session.commit()
-        all = pin_table.query.all()
-        result = pin_table.query.filter_by(id=len(all)).first()
-        id = result.id
-        pin = result.pin
-        return jsonify({'id': id, "pin": pin})
+        return jsonify({'s_n': s_n, "pin": pin})
 
 # resource route is defined and bounded to class generate
 api.add_resource(Generate, '/')
@@ -63,8 +62,10 @@ api.add_resource(Generate, '/')
 class validate(Resource):
     def get(self):
         request_data = request.get_json()
-        id = request_data['id']
+        s_n = request_data['s_n']
         pin = request_data['pin']
+        if not request_data or not s_n or not pin:
+            return jsonify({"message": "send complete details"})
         if pin_table.query.filter_by(pin=str(pin)).first() is not None:
             return "1"
         else:

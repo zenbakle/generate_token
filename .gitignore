@@ -1,8 +1,5 @@
-app.py
-try.py
-sqliteconn.py
-app1.py
-token.sqlite3
 __pycache__
 venv
+env
+token.db
 .env
