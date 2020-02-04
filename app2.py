@@ -47,7 +47,8 @@ class pin_table(db.Model):
 # the newly generated pin and id is returned in json format
 class Generate(Resource):
     def get(self):
-        s_n = 314159265365 + 1
+        q =pin_table.query.all()
+        s_n = 314159265366+len(q)
         pin = str(int(uuid.uuid4()))[:15]
         db.session.add(pin_table(pin,s_n))
         db.session.commit()
@@ -64,12 +65,14 @@ class validate(Resource):
         request_data = request.get_json()
         s_n = request_data['s_n']
         pin = request_data['pin']
+        pin_q = pin_table.query.filter_by(pin=str(pin)).first()
+        s_q = pin_table.query.filter_by(s_n=str(s_n)).first()
         if not request_data or not s_n or not pin:
             return jsonify({"message": "send complete details"})
-        if pin_table.query.filter_by(pin=str(pin)).first() is not None:
-            return "1"
-        else:
+        if not pin_q or not s_q:
             return "0"
+        else:
+            return "1"
 
 # resource route is defined and bounded to class validate
 api.add_resource(validate, '/valid')
